@@ -13,21 +13,20 @@
 #ifndef GET_NEXT_LINE_H
 # define GET_NEXT_LINE_H
 
+# include <stdlib.h>
+# include <unistd.h>
+
 # ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 42
+#  define BUFFER_SIZE 8192
 # endif
 
-# include <stddef.h>
-# include <unistd.h>
-# include <stdlib.h>
+# define FD_MAX 10240
 
-/* get_next_line.c */
+size_t	ft_strlen(char *s);
+char	*ft_strchr(char *s, int c);
+char	*ft_strjoin(char *left_str, char *buff);
+char	*ft_line(char *str);
+char	*ft_next_str(char *str);
+char	*ft_read(int fd, char *str);
 char	*get_next_line(int fd);
-
-/* get_next_line_utils.c */
-char	*ft_strchr(const char *s, int c);
-char	*ft_substr(const char *s, unsigned int start, size_t len);
-size_t	ft_strlen(const char *s);
-char	*ft_strjoin(const char *s1, const char *s2);
-
 #endif

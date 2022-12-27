@@ -12,71 +12,95 @@
 
 #include "get_next_line.h"
 
-static void	gnl_read(int fd, char *buf, char **str)
+char	*ft_get_line(char *save)
 {
 	int		i;
-	char	*tmp;
+	char	*s;
 
-	if (!*str || !ft_strchr(*str, '\n'))
+	i = 0;
+	if (!save[i])
+		return (NULL);
+	while (save[i] && save[i] != '\n')
+		i++;
+	s = (char *)malloc(sizeof(char) * (i + 2));
+	if (!s)
+		return (NULL);
+	i = 0;
+	while (save[i] && save[i] != '\n')
 	{
-		i = read(fd, buf, BUFFER_SIZE);
-		while (i > 0)
-		{
-			buf[i] = 0;
-			if (!*str)
-				*str = ft_substr(buf, 0, i);
-			else
-			{
-				tmp = *str;
-				*str = ft_strjoin(*str, buf);
-				free(tmp);
-			}
-			if (ft_strchr(buf, '\n'))
-				break ;
-			i = read(fd, buf, BUFFER_SIZE);
-		}
+		s[i] = save[i];
+		i++;
 	}
-	free(buf);
+	if (save[i] == '\n')
+	{
+		s[i] = save[i];
+		i++;
+	}
+	s[i] = '\0';
+	return (s);
 }
 
-static char	*gnl_process(char **str)
+char	*ft_save(char *save)
 {
 	int		i;
-	int		j;
-	char	*ret;
-	char	*tmp;
+	int		c;
+	char	*s;
 
-	if (!*str)
-		return (0);
-	if (!ft_strchr(*str, '\n'))
+	i = 0;
+	while (save[i] && save[i] != '\n')
+		i++;
+	if (!save[i])
 	{
-		ret = ft_substr(*str, 0, ft_strlen(*str));
-		free(*str);
-		*str = 0;
-		return (ret);
+		free(save);
+		return (NULL);
 	}
-	i = ft_strlen(*str);
-	j = ft_strlen(ft_strchr(*str, '\n'));
-	ret = ft_substr(*str, 0, i - j + 1);
-	tmp = *str;
-	*str = ft_substr(ft_strchr(*str, '\n'), 1, j - 1);
-	free(tmp);
-	return (ret);
+	s = (char *)malloc(sizeof(char) * (ft_strlen(save) - i + 1));
+	if (!s)
+		return (NULL);
+	i++;
+	c = 0;
+	while (save[i])
+		s[c++] = save[i++];
+	s[c] = '\0';
+	free(save);
+	return (s);
+}
+
+char	*ft_read_and_save(int fd, char *save)
+{
+	char	*buff;
+	int		read_bytes;
+
+	buff = malloc((BUFFER_SIZE + 1) * sizeof(char));
+	if (!buff)
+		return (NULL);
+	read_bytes = 1;
+	while (!ft_strchr(save, '\n') && read_bytes != 0)
+	{
+		read_bytes = read(fd, buff, BUFFER_SIZE);
+		if (read_bytes == -1)
+		{
+			free(buff);
+			return (NULL);
+		}
+		buff[read_bytes] = '\0';
+		save = ft_strjoin(save, buff);
+	}
+	free(buff);
+	return (save);
 }
 
 char	*get_next_line(int fd)
 {
-	char		*buf;
-	static char	*str;
+	char		*line;
+	static char	*save;
 
-	buf = malloc(sizeof(char) * (BUFFER_SIZE + 1));
-	if (!buf)
+	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (0);
-	if (BUFFER_SIZE < 1 || fd == -1 || read(fd, buf, 0) == -1)
-	{
-		free(buf);
-		return (0);
-	}
-	gnl_read(fd, buf, &str);
-	return (gnl_process(&str));
+	save = ft_read_and_save(fd, save);
+	if (!save)
+		return (NULL);
+	line = ft_get_line(save);
+	save = ft_save(save);
+	return (line);
 }
