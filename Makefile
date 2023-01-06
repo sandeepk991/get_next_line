@@ -18,7 +18,7 @@ AR = ar rcs
 
 CC = cc -c
 
-CFLAGS = -Wall -Wextra -Werror -D BUFFER_SIZE=42
+CFLAGS = -Wall -Wextra -Werror -D BUFFER_SIZE=1
 
 HEAD = get_next_line.h
 

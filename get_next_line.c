@@ -98,7 +98,7 @@ char	*get_next_line(int fd)
 	static char	*save_line;
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
-		return (0);
+		return (NULL);
 	save_line = ft_read_and_save(fd, save_line);
 	if (!save_line)
 		return (NULL);

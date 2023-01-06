@@ -19,6 +19,8 @@
 size_t	ft_strlen(char *s);
 char	*ft_strchr(char *s, int c);
 char	*ft_strjoin(char *left_str, char *buff);
-char	*ft_read(int fd, char *str);
 char	*get_next_line(int fd);
+char	*ft_read_and_save(int fd, char *save_line);
+char	*ft_save(char *save_line);
+char	*ft_get_line(char *save_line);
 #endif
